@@ -13,7 +13,7 @@ struct dense_graph {
     /*
     @param adj_matrix Adjacency matrix
     */
-    dense_graph(const vector<vector<int>>& adj_matrix) : adjacency_matrix(adj_matrix) {}
+    dense_graph(const vector<vector<double>>& adj_matrix) : adjacency_matrix(adj_matrix) {}
     /*
     Get indices of nodes that are avaiable to go to from node v
     */
@@ -27,7 +27,7 @@ struct dense_graph {
     /*
     Get distance between u and v
     */
-    int get_distance(int u, int v) const {
+    double get_distance(int u, int v) const {
         return adjacency_matrix[u][v];
     }
     /*
@@ -36,7 +36,7 @@ struct dense_graph {
     int get_n() const {
         return adjacency_matrix.size();
     }
-    vector<vector<int>> adjacency_matrix;
+    vector<vector<double>> adjacency_matrix;
 };
 
 /*
@@ -83,7 +83,7 @@ struct cartesian_rectangular_field {
     /*
     Get distance between u and v
     */
-    int get_distance(int u, int v) const {
+    double get_distance(int u, int v) const {
         return (walls.find(v) != walls.end()) ? INT_MAX : 1;
     }
     /*
@@ -148,16 +148,19 @@ struct cartesian_rectangular_field_with_diagonals {
     /*
     Get distance between u and v
     */
-    int get_distance(int u, int v) const {
-        if ((v / nx) + 1 == (u / nx)) return (walls.find(v) != walls.end()) ? INT_MAX : 1;
-        if ((v / nx) + 1 == (u / nx) && (v % nx) + 1 == (u % nx)) return (walls.find(v) != walls.end()) ? INT_MAX : std::sqrt(2);
-        if ((v / nx) + 1 == (u / nx) && (v % nx) - 1 == (u % nx)) return (walls.find(v) != walls.end()) ? INT_MAX : std::sqrt(2);
-        if ((v / nx) - 1 == (u / nx)) return (walls.find(v) != walls.end()) ? INT_MAX : 1;
-        if ((v / nx) - 1 == (u / nx) && (v % nx) + 1 == (u % nx)) return (walls.find(v) != walls.end()) ? INT_MAX : std::sqrt(2);
-        if ((v / nx) - 1 == (u / nx) && (v % nx) - 1 == (u % nx)) return (walls.find(v) != walls.end()) ? INT_MAX : std::sqrt(2);
-        if ((v % nx) + 1 == (u / nx)) return (walls.find(v) != walls.end()) ? INT_MAX : 1;
-        if ((v % nx) - 1 == (u / nx)) return (walls.find(v) != walls.end()) ? INT_MAX : 1;
-        return INT_MAX;
+    double get_distance(int u, int v) const {
+        int ux = u % nx, uy = u / nx;
+        int vx = v % nx, vy = v / nx;
+        int dx = vx - ux;
+        int dy = vy - uy;
+        
+        if (abs(dx) > 1 || abs(dy) > 1) return INT_MAX;
+        
+        if (walls.find(v) != walls.end()) return INT_MAX;
+        
+        if (dx == 0 && dy == 0) return 0;
+        if (dx == 0 || dy == 0) return 1.0;
+        return sqrt(2.0);
     }
     /*
     Get number of nodes

@@ -16,9 +16,9 @@ Finds shortest path from node s to node t in a graph g and it's length using Dij
 @return pair<length, path> - length of path and sequence of indices in path from start to finish stored in vector 
 */
 template<typename Graph>
-pair<long long, vector<int>> dijkstra(const Graph& g, int s, int t) {
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> Q;
-    vector<long long> dist(g.get_n(), INT_MAX);
+pair<double, vector<int>> dijkstra(const Graph& g, int s, int t) {
+    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> Q;
+    vector<double> dist(g.get_n(), INT_MAX);
     vector<int> prev(g.get_n());
 
     dist[s] = 0;
@@ -34,7 +34,7 @@ pair<long long, vector<int>> dijkstra(const Graph& g, int s, int t) {
         if (dist[u] < d) continue;                      // skip old values of d for u
 
         for (int v : g.get_neighbours(u)) {
-            long long new_dist = dist[u] + g.get_distance(u, v);
+            double new_dist = dist[u] + g.get_distance(u, v);
             if (new_dist < dist[v]) {
                 prev[v] = u;
                 dist[v] = new_dist;

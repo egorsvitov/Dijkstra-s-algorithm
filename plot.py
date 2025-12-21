@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-with open('maze.txt', 'r') as f:
+with open('maze_diags.txt', 'r') as f:
     lines = f.readlines()
 
 path = [tuple(map(int, p.strip('()').split(','))) for p in lines[0].split()]

@@ -9,7 +9,7 @@
 using namespace std;
 
 template<typename Graph>
-pair<long long, vector<int>> dijkstra(const Graph& g, int s, int t);
+pair<double, vector<int>> dijkstra(const Graph& g, int s, int t);
 
 void test1() {
     cout << "=== Test 1 ===" << endl;
@@ -18,7 +18,7 @@ void test1() {
     //   30      25       15
     //   |        |        |
     //   3 --50-- 4 --35-- 5
-    vector<vector<int>> adj = {
+    vector<vector<double>> adj = {
         {0, 10, 0, 30, 0, 0},
         {10, 0, 20, 0, 25, 0},
         {0, 20, 0, 0, 0, 15},
@@ -52,7 +52,7 @@ void test2() {
     //   1    50
     //   |  /
     //    2
-    vector<vector<int>> adj = {
+    vector<vector<double>> adj = {
         {0, 100, 1},
         {100, 0, 50},
         {1, 50, 0}
@@ -206,7 +206,8 @@ void test_vertical_walls_maze_with_diags_to_file(int size_x = 20, int size_y = 2
         outfile << endl;
     }
     cout << "Path and field written to file: " << filename << endl;
-    cout << "Path length: " << result.second.size() << " points" << endl;
+    cout << "Path length in nodes: " << result.second.size() << " points" << endl;
+    cout << "Path length: " << result.first << endl;
     
     outfile.close();
 }
