@@ -147,8 +147,9 @@ void test_vertical_walls_maze_to_file(int size_x = 20, int size_y = 20, const st
         outfile << endl;
     }
     cout << "Path and field written to file: " << filename << endl;
-    cout << "Path length: " << result.second.size() << " points" << endl;
-    
+    cout << "Path length in nodes: " << result.second.size() << " points" << endl;
+    cout << "Path length: " << result.first << endl;
+
     outfile.close();
 }
 
@@ -209,5 +210,101 @@ void test_vertical_walls_maze_with_diags_to_file(int size_x = 20, int size_y = 2
     cout << "Path length in nodes: " << result.second.size() << " points" << endl;
     cout << "Path length: " << result.first << endl;
     
+    outfile.close();
+}
+
+/*
+Parse txt file from path that contains Maze Generation array from SimpleMazeGenerator and convert it to field for constructor of cartesian_rectangular_field
+*/
+vector<vector<int>> parse_maze_gen(const string& path_to_maze_structure, const string& path_to_corridor_directions) {
+    ifstream file1(path_to_maze_structure);
+    vector<vector<int>> result;
+    string line1;
+    
+    while (getline(file1, line1)) {
+        vector<int> row;
+        stringstream ss(line1);
+        int num;
+        while (ss >> num) {
+            row.push_back(num == 1 ? 0 : 1);
+            cout << num << endl;
+        }
+        result.push_back(row);
+    }
+
+    int i = 0;
+    ifstream file2(path_to_corridor_directions);
+    string line2;
+
+    int nx = result[0].size(), ny = result.size();
+
+    while (getline(file2, line2)) {
+        int j = 0;
+        stringstream ss(line2); 
+        int num;
+        while (ss >> num) {
+            int di = 0, dj = 0;
+            if (num == 1) di = -1;
+            if (num == 0) dj = 1;
+            if (num == 2) dj = -1;
+            cout << "(" << i + di << " " << j + dj << ") ";
+            if (result[i][j] == 0) result[max(min(i + di, ny - 1), 0)][max(min(j + dj, nx - 1), 0)] = 0; 
+            j++;
+        }
+        cout << endl;
+        i++;
+    }
+    
+    return result;
+}
+
+void test_SimpleMazeGenerator(const string& path_to_maze_structure, const string& path_to_corridor_directions, const string& filename) {
+    cout << "=== Test \"SimpleMazeGenerator\" ===" << endl;
+
+    vector<vector<int>> field = parse_maze_gen(path_to_maze_structure, path_to_corridor_directions);
+    
+    int size_x = field[0].size();
+    int size_y = field.size();
+
+    cartesian_rectangular_field maze(field);
+    
+    ofstream outfile(filename);
+    
+    pair<pair<int, int>, pair<int, int>> route = {{11, 59}, {1, 1}};
+    
+    int start = route.first.second * size_x + route.first.first;
+    int end = route.second.second * size_x + route.second.first;
+    
+    auto start_time = std::chrono::high_resolution_clock::now();
+    auto result = dijkstra(maze, start, end);
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+
+    std::cout << "time: " << duration.count() << " ms" << std::endl;
+
+    for (int k = 0; k < result.second.size(); k++) {
+        int node = result.second[k];
+        int y = node / size_x;
+        int x = node % size_x;
+        outfile << "(" << x << "," << y << ")";
+        if (k < result.second.size() - 1) {
+            outfile << " ";
+        }
+    }
+    outfile << endl;
+    
+    for (int i = 0; i < size_y; i++) {
+        for (int j = 0; j < size_x; j++) {
+            outfile << field[i][j];
+            if (j < size_x - 1) {
+                outfile << " ";
+            }
+        }
+        outfile << endl;
+    }
+    cout << "Path and field written to file: " << filename << endl;
+    cout << "Path length in nodes: " << result.second.size() << " points" << endl;
+    cout << "Path length: " << result.first << endl;
+
     outfile.close();
 }

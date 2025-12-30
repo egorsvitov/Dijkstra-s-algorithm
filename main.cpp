@@ -63,4 +63,5 @@ int main() {
     test_no_walls();
     test_vertical_walls_maze_to_file(20, 20, "maze.txt");
     test_vertical_walls_maze_with_diags_to_file(20, 20, "maze_diags.txt");
+    test_SimpleMazeGenerator("SimpleMazeGen/maze_structure.txt", "SimpleMazeGen/corridor_directions.txt", "SimpleMazeGen_result.txt");    
 }
